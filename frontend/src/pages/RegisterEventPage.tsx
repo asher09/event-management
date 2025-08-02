@@ -6,6 +6,7 @@ import TextInput from '../components/TextInput';
 
 export default function RegisterEventPage() {
   const { eventId } = useParams();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [registerMsg, setRegisterMsg] = useState('');
@@ -25,17 +26,17 @@ export default function RegisterEventPage() {
     try {
       // First, try to get userId by email
       let userId = null;
-      const usersRes = await axios.get('/api/users');
+      const usersRes = await axios.get(`${API_BASE_URL}/api/users`);
       const user = usersRes.data.find((u: any) => u.email === email);
       if (user) {
         userId = user.id;
       } else {
         // Create user if not exists
-        const createRes = await axios.post('/api/users', { name, email });
+        const createRes = await axios.post(`${API_BASE_URL}/api/users`, { name, email });
         userId = createRes.data.id;
       }
       // Now register using userId
-      const res = await axios.post('/api/events/register', { eventId, userId });
+      const res = await axios.post(`${API_BASE_URL}/api/events/register`, { eventId, userId });
       setRegisterMsg(res.data.message || 'Registered successfully!');
     } catch (err: any) {
       setRegisterMsg(err.response?.data?.message || 'Registration failed.');
@@ -54,7 +55,7 @@ export default function RegisterEventPage() {
     setLoading(true);
     try {
       // Get all users, find userId by email
-      const usersRes = await axios.get('/api/users');
+      const usersRes = await axios.get(`${API_BASE_URL}/api/users`);
       const user = usersRes.data.find((u: any) => u.email === myEmail);
       if (!user) {
         setFindMsg('No registered events found.');
@@ -63,7 +64,7 @@ export default function RegisterEventPage() {
       }
       const userId = user.id;
       // Get all events, filter those where user is registered
-      const eventsRes = await axios.get('/api/events');
+      const eventsRes = await axios.get(`${API_BASE_URL}/api/events`);
       const events = eventsRes.data.filter((ev: any) =>
         ev.registrations?.some((reg: any) => reg.user_id === userId)
       );
@@ -80,11 +81,11 @@ export default function RegisterEventPage() {
     try {
       // Get userId by email
       let userId = null;
-      const usersRes = await axios.get('/api/users');
+      const usersRes = await axios.get(`${API_BASE_URL}/api/users`);
       const user = usersRes.data.find((u: any) => u.email === myEmail);
       if (!user) throw new Error('User not found');
       userId = user.id;
-      await axios.post('/api/events/cancel', { eventId, userId });
+      await axios.post(`${API_BASE_URL}/api/events/cancel`, { eventId, userId });
       setMyEvents(myEvents.filter(ev => ev.id !== eventId));
       setFindMsg('Registration cancelled.');
     } catch (err: any) {

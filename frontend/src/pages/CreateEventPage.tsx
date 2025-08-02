@@ -4,6 +4,9 @@ import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import { Button } from '../components/Button';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+
 export default function CreateEventPage() {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
@@ -14,7 +17,7 @@ export default function CreateEventPage() {
   const handleCreate = async () => {
     setMessage('');
     try {
-      await axios.post('/api/events', { title, event_time: eventTime, location, capacity }, {
+      await axios.post(`${API_BASE_URL}/api/events`, { title, event_time: eventTime, location, capacity }, {
         headers: { 'Content-Type': 'application/json'}
       });
       setMessage('Created!');

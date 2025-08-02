@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 export default function EventsDashboardPage() {
   const [events, setEvents] = useState<any[]>([]);
@@ -13,7 +15,7 @@ export default function EventsDashboardPage() {
 
   useEffect(() => {
     setLoading(true);
-    axios.get('/api/events')
+    axios.get(`${API_BASE_URL}/api/events`)
       .then(res => {
         // Defensive: always set to array
         setEvents(Array.isArray(res.data) ? res.data : []);
@@ -29,7 +31,7 @@ export default function EventsDashboardPage() {
   const openDetails = (eventId: string) => {
     setDetailsLoading(true);
     setSelectedEvent(null);
-    axios.get(`/api/events/${eventId}`)
+    axios.get(`${API_BASE_URL}/api/events/${eventId}`)
       .then(res => {
         setSelectedEvent(res.data);
         setDetailsLoading(false);
